@@ -19,7 +19,8 @@ propComponents:
     'DataViewTrTree',
     'DataViewTrObject',
     'DataViewTh',
-    'DataViewThResizableProps'
+    'DataViewThResizableProps',
+    'DataViewTableHead'
   ]
 sourceLink: https://github.com/patternfly/react-data-view/blob/main/packages/module/patternfly-docs/content/extensions/data-view/examples/Table/Table.md
 ---
@@ -103,7 +104,11 @@ When sticky headers and columns are enabled:
 - The table header remains visible when scrolling vertically
 - Columns marked with `isStickyColumn: true` remain visible when scrolling horizontally
 - The table is wrapped in `OuterScrollContainer` and `InnerScrollContainer` components to enable sticky behavior
-- Sticky columns can have additional styling like borders using `hasRightBorder` or `hasLeftBorder` props
+- Sticky columns can use `hasRightBorder` on the **last** column in a locked group to draw a single divider before scrollable columns. Do not set `hasRightBorder` or `hasLeftBorder` on earlier columns in the group (for example, the selection checkbox column or a leading favorites column).
+
+When **row selection** is enabled (via the `DataView` `selection` prop) and a column in the `columns` array is marked `isStickyColumn: true`, the row-selection checkbox column is included in the same sticky group. The checkbox column stays sticky without a right border; the first sticky data column’s `stickyLeftOffset` is aligned to sit to the right of the selection column. Leading `null` placeholders in `columns` are skipped when locating the first sticky data column.
+
+When multiple leading data columns are sticky (for example, favorites and name), mark each with `isStickyColumn: true`, set a narrow `stickyMinWidth` on the first column in `columns` (for example `3rem` for a favorites-only cell), leave that cell's content empty (`cell: null`) so only the favorite star renders, and set `hasRightBorder: true` only on the last column in that group.
 
 ### Sticky header and columns example
 

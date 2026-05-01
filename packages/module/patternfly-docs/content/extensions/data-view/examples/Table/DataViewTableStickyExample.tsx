@@ -50,8 +50,8 @@ const rowActions = [
 ];
 
 const rows: DataViewTr[] = repositories.map(({ id, name, branches, prs, workspaces, lastCommit, contributors, stars, forks }) => [
-  { id, cell: workspaces, props: { favorites: { isFavorited: true } } },
-  { cell: <Button href='#' variant='link' isInline>{name}</Button>, props: { isStickyColumn: true, hasRightBorder: true, hasLeftBorder: true, modifier: "nowrap" } },
+  { id, cell: null, props: { favorites: { isFavorited: true }, isStickyColumn: true } },
+  { cell: <Button href='#' variant='link' isInline>{name}</Button>, props: { isStickyColumn: true, hasRightBorder: true, modifier: "nowrap" } },
   { cell: branches, props: { modifier: "nowrap" } },
   { cell: prs, props: { modifier: "nowrap" } },
   { cell: workspaces, props: { modifier: "nowrap" } },
@@ -63,8 +63,8 @@ const rows: DataViewTr[] = repositories.map(({ id, name, branches, prs, workspac
 ]);
 
 const columns: DataViewTh[] = [
-  null,
-  { cell: 'Repositories', props: { isStickyColumn: true, modifier: 'fitContent', hasRightBorder: true, hasLeftBorder: true } },
+  { cell: '', props: { isStickyColumn: true, stickyMinWidth: '4rem' } },
+  { cell: 'Repositories', props: { isStickyColumn: true, stickyMinWidth: '150px', hasRightBorder: true } },
   { cell: <>Branches<ExclamationCircleIcon className='pf-v6-u-ml-sm' color="var(--pf-t--global--color--status--danger--default)"/></>, props: { width: 20 } },
   { cell: 'Pull requests', props: { width: 20 } },
   { cell: 'Workspaces', props: { info: { tooltip: 'More information' }, width: 20 } },

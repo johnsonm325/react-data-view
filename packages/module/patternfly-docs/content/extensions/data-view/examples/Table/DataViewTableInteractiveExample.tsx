@@ -81,12 +81,13 @@ export const InteractiveExample: FunctionComponent = () => {
   const rows: DataViewTr[] = repositories.map(({ id, name, branches, prs, workspaces, lastCommit, contributors, stars, forks }) => [
     {
       id,
-      cell: workspaces,
+      cell: isSticky ? null : workspaces,
       props: {
-        favorites: { isFavorited: true }
+        favorites: { isFavorited: true },
+        ...(isSticky ? { isStickyColumn: true } : {}),
       }
     },
-    { cell: <Button href='#' variant='link' isInline>{name}</Button>, props: { isStickyColumn: isSticky, hasRightBorder: true, hasLeftBorder: true, modifier: "nowrap" } },
+    { cell: <Button href='#' variant='link' isInline>{name}</Button>, props: { isStickyColumn: isSticky, hasRightBorder: isSticky, modifier: "nowrap" } },
     { cell: branches, props: { modifier: "nowrap" } },
     { cell: prs, props: { modifier: "nowrap" } },
     { cell: workspaces, props: { modifier: "nowrap" } },
@@ -97,8 +98,8 @@ export const InteractiveExample: FunctionComponent = () => {
   ]);
 
   const columns: DataViewTh[] = [
-    null,
-    { cell: 'Repositories', props: { isStickyColumn: isSticky, modifier: 'fitContent', hasRightBorder: true, hasLeftBorder: true } },
+    isSticky ? { cell: '', props: { isStickyColumn: true, stickyMinWidth: '3rem' } } : null,
+    { cell: 'Repositories', props: { isStickyColumn: isSticky, modifier: 'nowrap', hasRightBorder: isSticky } },
     { cell: <>Branches<ExclamationCircleIcon className='pf-v6-u-ml-sm' color="var(--pf-t--global--color--status--danger--default)"/></>, props: { width: 20 } },
     { cell: 'Pull requests', props: { width: 20 } },
     { cell: 'Workspaces', props: { info: { tooltip: 'More information' }, width: 20 } },
