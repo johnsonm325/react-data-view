@@ -82,11 +82,18 @@ export const DataViewTableBasic: FC<DataViewTableBasicProps> = ({
       (content) => content.rowId === rowId
     ) : [];
 
+    // Check if the first cell in this row has isStickyColumn
+    const firstCellProps = rowData[0] && isDataViewTdObject(rowData[0]) ? (rowData[0]?.props ?? {}) : {};
+    const firstCellIsSticky = firstCellProps.isStickyColumn;
+
     const rowContent = (
       <Tr key={needsSeparateTbody ? undefined : rowIndex} ouiaId={`${ouiaId}-tr-${rowIndex}`} {...(rowIsObject && row?.props)} isContentExpanded={isRowExpanded} isControlRow>
         {isSelectable && (
           <Td
             key={`select-${rowIndex}`}
+            isStickyColumn={firstCellIsSticky}
+            stickyMinWidth="45px"
+            stickyLeftOffset="0px"
             select={{
               rowIndex,
               onSelect: (_event, isSelecting) => {
@@ -102,10 +109,18 @@ export const DataViewTableBasic: FC<DataViewTableBasicProps> = ({
           const cellExpandableContent = isExpandable ? expandedRows?.find(
             (content) => content.rowId === rowId && content.columnId === colIndex
           ) : undefined;
+
+          // Get the cell props
+          const cellProps = cellIsObject ? (cell?.props ?? {}) : {};
+          // If the first column is sticky and selection is enabled, offset it by the selection column width
+          const enhancedCellProps = colIndex === 0 && cellProps.isStickyColumn && isSelectable
+            ? { ...cellProps, stickyLeftOffset: '45px' }
+            : cellProps;
+
           return (
             <Td
               key={colIndex}
-              {...(cellIsObject && (cell?.props ?? {}))}
+              {...enhancedCellProps}
               {...(cellExpandableContent != null && {
                 compoundExpand: {
                   isExpanded: isRowExpanded && expandedColIndex === colIndex,
@@ -158,7 +173,7 @@ export const DataViewTableBasic: FC<DataViewTableBasicProps> = ({
       <OuterScrollContainer>
         <InnerScrollContainer>
           <Table ref={tableRef} aria-label="Data table" ouiaId={ouiaId} isExpandable={isExpandable} hasAnimations {...props} isStickyHeader >
-            { activeHeadState || <DataViewTableHead columns={columns} ouiaId={ouiaId} hasResizableColumns={hasResizableColumns} /> }
+            { activeHeadState || <DataViewTableHead columns={columns} ouiaId={ouiaId} hasResizableColumns={hasResizableColumns} isSticky={isSticky} /> }
             { bodyContent }
           </Table>
         </InnerScrollContainer>
@@ -167,7 +182,7 @@ export const DataViewTableBasic: FC<DataViewTableBasicProps> = ({
   } else {
     return (
       <Table ref={tableRef} aria-label="Data table" ouiaId={ouiaId} isExpandable={isExpandable} hasAnimations {...props}>
-        { activeHeadState || <DataViewTableHead columns={columns} ouiaId={ouiaId} hasResizableColumns={hasResizableColumns} /> }
+        { activeHeadState || <DataViewTableHead columns={columns} ouiaId={ouiaId} hasResizableColumns={hasResizableColumns} isSticky={isSticky} /> }
         { bodyContent }
       </Table>
     );
